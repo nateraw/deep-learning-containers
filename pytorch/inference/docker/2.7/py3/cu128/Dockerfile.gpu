@@ -8,11 +8,16 @@ ARG CUDNN_VERSION=9.1.0.70
 ARG NCCL_VERSION=2.23.4
 
 # PyTorch Binaries
-ARG TORCH_URL=https://framework-binaries.s3.us-west-2.amazonaws.com/pytorch/v2.7.0/x86/cu128/torch-2.7.1%2Bcu128-cp310-cp310-linux_x86_64.whl
-ARG TORCHVISION_URL=https://framework-binaries.s3.us-west-2.amazonaws.com/pytorch/v2.7.0/x86/cu128/torchvision-0.22.1%2Bcu128-cp310-cp310-linux_x86_64.whl
-ARG TORCHAUDIO_URL=https://framework-binaries.s3.us-west-2.amazonaws.com/pytorch/v2.7.0/x86/cu128/torchaudio-2.7.1%2Bcu128-cp310-cp310-linux_x86_64.whl
-ARG TORCHTEXT_URL=https://framework-binaries.s3.us-west-2.amazonaws.com/pytorch/v2.7.0/x86/cu128/torchtext-0.18.0%2Bcu128-cp310-cp310-linux_x86_64.whl
-ARG TORCHDATA_URL=https://framework-binaries.s3.us-west-2.amazonaws.com/pytorch/v2.7.0/x86/cu128/torchdata-0.11.0%2Bcu128-py3-none-any.whl
+# ARG TORCH_URL=https://framework-binaries.s3.us-west-2.amazonaws.com/pytorch/v2.7.0/x86/cu128/torch-2.7.1%2Bcu128-cp310-cp310-linux_x86_64.whl
+# ARG TORCHVISION_URL=https://framework-binaries.s3.us-west-2.amazonaws.com/pytorch/v2.7.0/x86/cu128/torchvision-0.22.1%2Bcu128-cp310-cp310-linux_x86_64.whl
+# ARG TORCHAUDIO_URL=https://framework-binaries.s3.us-west-2.amazonaws.com/pytorch/v2.7.0/x86/cu128/torchaudio-2.7.1%2Bcu128-cp310-cp310-linux_x86_64.whl
+# ARG TORCHTEXT_URL=https://framework-binaries.s3.us-west-2.amazonaws.com/pytorch/v2.7.0/x86/cu128/torchtext-0.18.0%2Bcu128-cp310-cp310-linux_x86_64.whl
+# ARG TORCHDATA_URL=https://framework-binaries.s3.us-west-2.amazonaws.com/pytorch/v2.7.0/x86/cu128/torchdata-0.11.0%2Bcu128-py3-none-any.whl
+
+ARG TORCH_URL=https://download.pytorch.org/whl/cu128/torch-2.7.1%2Bcu128-cp310-cp310-manylinux_2_28_x86_64.whl
+ARG TORCHVISION_URL=https://download.pytorch.org/whl/cu128/torchvision-0.22.1%2Bcu128-cp310-cp310-manylinux_2_28_x86_64.whl
+ARG TORCHAUDIO_URL=https://download.pytorch.org/whl/cu128/torchaudio-2.7.1%2Bcu128-cp310-cp310-manylinux_2_28_x86_64.whl
+ARG FLASH_ATTN_URL=https://github.com/Dao-AILab/flash-attention/releases/download/v2.7.4.post1/flash_attn-2.7.4.post1+cu12torch2.6cxx11abiTRUE-cp310-cp310-linux_x86_64.whl
 
 ARG TORCHSERVE_VERSION
 ARG SM_TOOLKIT_VERSION
@@ -52,6 +57,7 @@ ARG TORCHAUDIO_URL
 ARG TORCHTEXT_URL
 ARG TORCHSERVE_VERSION
 ARG TORCHDATA_URL
+ARG FLASH_ATTN_URL
 
 # This arg required to stop docker build waiting for region configuration while installing tz data from ubuntu 20
 ENV DEBIAN_FRONTEND=noninteractive
@@ -222,9 +228,10 @@ RUN pip install --no-cache-dir -U \
     ${TORCH_URL} \
     ${TORCHVISION_URL} \
     ${TORCHAUDIO_URL} \
-    ${TORCHTEXT_URL} \
-    ${TORCHDATA_URL} \
-    "triton==3.2.0"
+    "triton==3.3.1"
+
+RUN pip install --no-cache-dir -U --no-build-isolation \
+    "${FLASH_ATTN_URL}"
 
 # Install NCCL
 RUN cd /tmp \
